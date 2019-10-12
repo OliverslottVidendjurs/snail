@@ -9,7 +9,7 @@ type snegl = {
 
 let snegle: snegl[] = [{
     id: "a",
-    navn: "snegl 1",
+    navn: "Dennis",
     foto: "img/snegl1.png",
     startY: -40,
     x: 0,
@@ -17,11 +17,27 @@ let snegle: snegl[] = [{
 },
 {
     id: "b",
-    navn: "snegl 2",
+    navn: "George",
     foto: "img/snegl2.png",
     startY: 40,
-    x: -160,
-    y: 40
+    x: 0,
+    y: 0
+},
+{
+    id: "c",
+    navn: "Bob",
+    foto: "img/snegl3.png",
+    startY: 120,
+    x: 0,
+    y: 0
+},
+{
+    id: "d",
+    navn: "Harold",
+    foto: "img/snegl4.png",
+    startY: 200,
+    x: 0,
+    y: 0  
 }];
 
 let sek = 0;
@@ -62,6 +78,7 @@ function reset(){
         snegle[i].y = snegle[i].startY;
     }
     winners = [];
+    sek = 0;
     document.querySelector<HTMLDivElement>("#resetknap")!.style.display = "none";
     document.querySelector<HTMLParagraphElement>(".resultat p")!.innerText = "";
     start();
