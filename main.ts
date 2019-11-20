@@ -37,7 +37,7 @@ let snegle: snegl[] = [{
     foto: "img/snegl4.png",
     startY: 200,
     x: 0,
-    y: 0  
+    y: 0
 }];
 
 let sek = 0;
@@ -50,7 +50,7 @@ let winners: string[] = [];
 
 let racetrack = document.querySelector<HTMLDivElement>("#raceway");
 
-for(let i = 0; i < snegle.length; i++){
+for (let i = 0; i < snegle.length; i++) {
     snegle[i].x = startX;
     snegle[i].y = snegle[i].startY;
 
@@ -67,13 +67,13 @@ for(let i = 0; i < snegle.length; i++){
     racetrack!.appendChild(s);
 }
 
-function start(){
+function start() {
     document.querySelector<HTMLDivElement>("#startknap")!.style.display = "none";
     afsted();
 }
 
-function reset(){
-    for(let i = 0; i < snegle.length; i++){
+function reset() {
+    for (let i = 0; i < snegle.length; i++) {
         snegle[i].x = startX;
         snegle[i].y = snegle[i].startY;
     }
@@ -84,19 +84,19 @@ function reset(){
     start();
 }
 
-document.querySelector("#resetknap")!.addEventListener("click", function(){
+document.querySelector("#resetknap")!.addEventListener("click", function () {
     reset();
 });
 
-function afsted(){
-    for(let i = 0; i < snegle.length; i++){
+function afsted() {
+    for (let i = 0; i < snegle.length; i++) {
         snegle[i].x += spring();
         document.querySelector<HTMLDivElement>(`#${snegle[i].id}`)!.style.left = snegle[i].x + "px";
-        if(snegle[i].x >= finishLine){
+        if (snegle[i].x >= finishLine) {
             winners.push(snegle[i].navn);
         }
     }
-    if(winners.length) {        
+    if (winners.length) {
         winner(winners);
     } else {
         setTimeout("afsted();", tidsinterval);
@@ -105,20 +105,55 @@ function afsted(){
 
 }
 
+interface localObject {
+    name: string,
+    time: number
+}
+
 function winner(vinderen: string[]) {
     let text = document.querySelector<HTMLParagraphElement>(".resultat p");
     let tid = (sek * tidsinterval) / 1000;
-    if(vinderen.length){
-        if(vinderen.length === 1){
+    if (vinderen.length) {
+        if (vinderen.length === 1) {
             text!.innerText = `Ræset blev vundet af ${vinderen}! Det tog ${tid} sekunder`
         } else {
             text!.innerText = `Ræset er slut - det blev udafgjort mellem: ${vinderen}! Det tog ${tid} sekunder`;
         }
     }
     document.querySelector<HTMLDivElement>("#resetknap")!.style.display = "block";
+
+    let parsed: localObject[] = JSON.parse(localStorage.getItem("winner") as string);
+    if(parsed === null){
+        parsed = [];
+    }
+    for (let vinder of vinderen) {
+        parsed.push({ name: vinder, time: tid });
+    }
+    localStorage.setItem("winner", JSON.stringify(parsed));
+    renderTop10();
+    
 }
 
-function spring(): number{
+function getTop10(): localObject[]{
+    let parsed: localObject[] = JSON.parse(localStorage.getItem("winner") as string);
+    //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+    let top10 = parsed.sort(function(a,b){
+        return a.time - b.time;
+    }).slice(0, 10);   
+    return top10; 
+}
+
+renderTop10();
+function renderTop10(){
+    const top10elm = document.querySelector<HTMLUListElement>(".top10");
+    top10elm!.innerHTML = "";
+
+    for(let snegl of getTop10()){
+        top10elm!.innerHTML += `<li>${snegl.name}: ${snegl.time}</li>`
+    }
+}
+
+function spring(): number {
     let randomStep = Math.round(Math.random() * maxSpring) + minSpring;
     return randomStep;
 }

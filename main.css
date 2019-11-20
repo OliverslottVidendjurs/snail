@@ -137,3 +137,10 @@ div.vinderen button {
     z-index: 2;
     transform: translateX(-50%);
 }
+
+.top10Container {
+    position: absolute;
+    top: 30%;
+    left: 50px;
+    z-index: 5;
+}

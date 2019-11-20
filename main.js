@@ -100,6 +100,31 @@ function winner(vinderen) {
         }
     }
     document.querySelector("#resetknap").style.display = "block";
+    let parsed = JSON.parse(localStorage.getItem("winner"));
+    if (parsed === null) {
+        parsed = [];
+    }
+    for (let vinder of vinderen) {
+        parsed.push({ name: vinder, time: tid });
+    }
+    localStorage.setItem("winner", JSON.stringify(parsed));
+    renderTop10();
+}
+function getTop10() {
+    let parsed = JSON.parse(localStorage.getItem("winner"));
+    //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+    let top10 = parsed.sort(function (a, b) {
+        return a.time - b.time;
+    }).slice(0, 10);
+    return top10;
+}
+renderTop10();
+function renderTop10() {
+    const top10elm = document.querySelector(".top10");
+    top10elm.innerHTML = "";
+    for (let snegl of getTop10()) {
+        top10elm.innerHTML += `<li>${snegl.name}: ${snegl.time}</li>`;
+    }
 }
 function spring() {
     let randomStep = Math.round(Math.random() * maxSpring) + minSpring;
